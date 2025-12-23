@@ -1,0 +1,122 @@
+@import "variables";
+@import "bootstrap/scss/bootstrap";
+
+@font-face {
+    font-family: 'StardewInGame';
+    src: url('../assets/fonts/stardew-ingame-ru-en/stardew-ingame.woff2') format('woff2'),
+         url('../assets/fonts/stardew-ingame-ru-en/stardew-ingame.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Stardew';
+    src: url('../assets/fonts/stardew-en/stardew.woff2') format('woff2'),
+         url('../assets/fonts/stardew-en/stardew.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@mixin pixel-art {
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: pixelated;
+}
+
+.brand-name {
+    font-family: "Stardew";
+    color: $color-brand;
+    font-size: 2rem;
+    margin-top: 0.5rem;
+}
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+}
+
+// Фиксим расположение кнопки в карточке
+.card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-text {
+    flex-grow: 1; // Текст занимает всё доступное пространство
+    margin-bottom: 1rem;
+}
+
+.card-img-top {
+    @include pixel-art;
+    height: 200px;
+    object-fit: contain;
+}
+
+// Стили для модального изображения
+.modal-image {
+    @include pixel-art;
+    width: auto;
+    max-width: 100%;
+    
+    // Адаптивная высота для разных экранов
+    height: 120px;
+    
+    @include media-breakpoint-up(sm) {
+        height: 160px;
+    }
+    
+    @include media-breakpoint-up(md) {
+        height: 200px;
+    }
+    
+    @include media-breakpoint-up(lg) {
+        height: 240px;
+    }
+    
+    @include media-breakpoint-up(xl) {
+        height: 280px;
+    }
+    
+    @include media-breakpoint-up(xxxl) {
+        height: 320px;
+    }
+    
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.category-fruit {
+    background-color: $color-category-fruit !important;
+}
+
+.category-vegetable {
+    background-color: $color-category-vegetable !important;
+}
+
+.category-flower {
+    background-color: $color-category-flower !important;
+}
+
+// Общие стили для всех тайлов
+%tile-base {
+    background-repeat: repeat;
+    background-size: $tile-size $tile-size;
+}
+
+body {
+    @extend %tile-base;
+    @include pixel-art;
+    font-family: 'StardewInGame', 'Segoe UI', 'Roboto';
+    background-image: url('../../public/images/Background_Tile.png');
+    display: flex;
+    flex-direction: column;
+}

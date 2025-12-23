@@ -1,0 +1,33 @@
+$shadow: rgba(0, 0, 0, 0.3);
+$color-text-light: #fcf0f0;
+$color-category-fruit: #b42928;
+$color-category-vegetable: #4A8C3C;
+$color-category-flower: #8A2BE2;
+$color-text-dark: #181818;
+$color-brand: #b17734;
+
+$primary: $color-category-fruit;
+$secondary: $color-category-vegetable;
+$success: $color-category-flower;
+$font-family-base: 'StardewInGame', 'Segoe UI', 'Roboto';
+
+$tile-size: 48px;
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px,
+  xxxl: 1600px // breakpoint
+);
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px,
+  xxxl: 1500px // max-width
+);
