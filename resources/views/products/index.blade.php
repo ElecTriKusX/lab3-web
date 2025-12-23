@@ -3,12 +3,9 @@
 @section('title', 'Все продукты')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Все продукты</h1>
-        <a href="{{ route('products.create') }}" class="btn btn-success">
-            <i class="fas fa-plus"></i> Добавить продукт
-        </a>
-    </div>
+
+    <h1>Все продукты</h1>
+
 
     @if($products->isEmpty())
         <div class="alert alert-info">
@@ -34,24 +31,25 @@
                             
                             <div class="d-flex justify-content-between">
                                 <a href="{{ route('products.show', $product) }}" 
-                                   class="btn btn-sm btn-outline-primary">
+                                class="btn btn-sm btn-outline-primary">
                                     Подробнее
                                 </a>
                                 
                                 <div class="btn-group">
                                     <a href="{{ route('products.edit', $product) }}" 
-                                       class="btn btn-sm btn-outline-warning">
+                                    class="btn btn-sm btn-outline-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     
+                                    <!-- ФОРМА ДЛЯ УДАЛЕНИЯ -->
                                     <form action="{{ route('products.destroy', $product) }}" 
-                                          method="POST" 
-                                          class="d-inline">
+                                        method="POST" 
+                                        class="d-inline"
+                                        onsubmit="return confirm('Вы уверены, что хотите удалить этот продукт?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
-                                                class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Удалить продукт?')">
+                                                class="btn btn-sm btn-outline-danger">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
