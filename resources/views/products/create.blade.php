@@ -73,7 +73,7 @@
                                      src="#" 
                                      alt="Предпросмотр" 
                                      class="img-thumbnail d-none"
-                                     style="max-height: 200px;">
+                                     style="max-height: 200px; height: 100px">
                             </div>
                         </div>
                         

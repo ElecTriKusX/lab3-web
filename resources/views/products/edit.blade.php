@@ -60,7 +60,7 @@
                                     <img src="{{ $product->image_url }}" 
                                          alt="Текущее изображение" 
                                          class="img-thumbnail"
-                                         style="max-height: 200px;">
+                                         style="max-height: 200px; height: 150px;">
                                     <p class="text-muted mt-1">
                                         Текущее изображение
                                     </p>
@@ -80,7 +80,6 @@
                             @enderror
                         </div>
                         
-                        <!-- Остальные поля аналогично create.blade.php -->
                         <div class="mb-3">
                             <label for="short_text" class="form-label">Краткое описание *</label>
                             <textarea class="form-control @error('short_text') is-invalid @enderror" 

@@ -3,16 +3,16 @@
 @section('title', $product->title)
 
 @section('content')
-    <div class="row">
-        <div class="col-md-4">
+    <div class="row justify-content-center">
+        <div class="col-md-3">
             <div class="card">
                 <img src="{{ $product->image_url }}" 
                      class="card-img-top" 
                      alt="{{ $product->title }}"
-                     style="height: 300px; object-fit: cover;">
+                     style="height: 200px;">
                 
                 <div class="card-body">
-                    <span class="badge bg-secondary">{{ $product->category_name }}</span>
+                    <span class="badge category-{{ $product->category }}">{{ $product->category_name }}</span>
                     <h5 class="card-title mt-2">{{ $product->title }}</h5>
                     
                     <div class="mt-3">
@@ -26,11 +26,7 @@
                         class="btn btn-outline-warning">
                             <i class="fas fa-edit"></i> Редактировать
                         </a>
-                        
-                        <!-- КНОПКА "НАЗАД" -->
-                        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left"></i> Назад
-                        </a>
+                
                         
                         <!-- ФОРМА ДЛЯ УДАЛЕНИЯ -->
                         <form action="{{ route('products.destroy', $product) }}" 

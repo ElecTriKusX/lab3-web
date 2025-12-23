@@ -62,7 +62,7 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             // Удаляем старое изображение
             if ($product->image) {
-                Storage::delete('public/images/' . $product->image);
+                Storage::delete('storage/images/' . $product->image);
             }
             
             $imageName = $this->uploadImage($request->file('image'));
@@ -77,9 +77,8 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        // Удаляем изображение из storage
         if ($product->image) {
-            Storage::delete('public/images/' . $product->image);
+            Storage::delete('storage/images/' . $product->image);
         }
         
         $product->delete();
@@ -92,8 +91,7 @@ class ProductController extends Controller
     {
         $fileName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
         
-        // Просто сохраняем файл без ресайза
-        $image->storeAs('public/images', $fileName);
+        $image->move(public_path('storage/images'), $fileName);
         
         return $fileName;
     }

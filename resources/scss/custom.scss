@@ -116,7 +116,7 @@ body {
     @extend %tile-base;
     @include pixel-art;
     font-family: 'StardewInGame', 'Segoe UI', 'Roboto';
-    background-image: url('../../public/images/Background_Tile.png');
+    background-image: url('../assets/images/Background_Tile.png');
     display: flex;
     flex-direction: column;
 }
