@@ -60,7 +60,7 @@
                             </td>
                             <td>{{ $user->created_at->format('d.m.Y') }}</td>
                             <td>
-                                <div class="btn-group btn-group-sm">
+                                <div class="btn-group btn-group-sm gap-2">
                                     <a href="{{ route('products.user-products', $user->name) }}" 
                                        class="btn btn-primary">
                                         <i class="fas fa-eye"></i> Продукты
