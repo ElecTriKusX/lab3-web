@@ -6,7 +6,6 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>
             Корзина удаленных продуктов
-            <span class="badge bg-danger">Только для администратора</span>
         </h1>
         
         <div>

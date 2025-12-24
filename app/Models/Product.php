@@ -65,29 +65,43 @@ class Product extends Model
         return $categories[$this->category] ?? 'Неизвестно';
     }
 
-    // Events для проверки прав
+    // Events для проверки прав на уровне модели
     protected static function booted()
     {
         // Проверка перед обновлением
         static::updating(function ($product) {
             $user = auth()->user();
+            
+            // Если нет пользователя - блокируем
             if (!$user) {
-                throw new \Exception('Необходима авторизация');
+                return false;
             }
-            if ($product->user_id !== $user->id && !$user->is_admin) {
-                throw new \Exception('У вас нет прав на редактирование этого продукта');
+            
+            // Если пользователь - владелец или админ - разрешаем
+            if ($product->user_id === $user->id || $user->is_admin) {
+                return true;
             }
+            
+            // Иначе блокируем
+            return false;
         });
 
         // Проверка перед удалением
         static::deleting(function ($product) {
             $user = auth()->user();
+            
+            // Если нет пользователя - блокируем
             if (!$user) {
-                throw new \Exception('Необходима авторизация');
+                return false;
             }
-            if ($product->user_id !== $user->id && !$user->is_admin) {
-                throw new \Exception('У вас нет прав на удаление этого продукта');
+            
+            // Если пользователь - владелец или админ - разрешаем
+            if ($product->user_id === $user->id || $user->is_admin) {
+                return true;
             }
+            
+            // Иначе блокируем
+            return false;
         });
     }
 }

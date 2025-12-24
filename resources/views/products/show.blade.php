@@ -15,30 +15,45 @@
                     <span class="badge category-{{ $product->category }}">{{ $product->category_name }}</span>
                     <h5 class="card-title mt-2">{{ $product->title }}</h5>
                     
+                    <!-- Автор продукта -->
+                    <p class="text-muted small mt-2">
+                        <i class="fas fa-user"></i> Автор: 
+                        <a href="{{ route('products.user-products', $product->user->name) }}">
+                            {{ $product->user->name }}
+                        </a>
+                        @if($product->user->is_admin)
+                            <span class="badge bg-danger">Admin</span>
+                        @endif
+                    </p>
+                    
                     <div class="mt-3">
                         <small class="text-muted">Создано: {{ $product->created_at }}</small><br>
                         <small class="text-muted">Обновлено: {{ $product->updated_at }}</small>
                     </div>
                     
-                    <div class="btn-group mt-3 w-100 gap-2">
-                        <a href="{{ route('products.edit', $product) }}" 
-                        class="btn btn-outline-warning">
-                            <i class="fas fa-edit"></i> Редактировать
-                        </a>
-                
-                        <!-- ФОРМА ДЛЯ УДАЛЕНИЯ -->
-                        <form action="{{ route('products.destroy', $product) }}" 
-                            method="POST" 
-                            class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" 
-                                    class="btn btn-outline-danger"
-                                    onclick="return confirm('Вы уверены, что хотите удалить этот продукт?')">
-                                <i class="fas fa-trash"></i> Удалить
-                            </button>
-                        </form>
-                    </div>
+                    <!-- Кнопки действий - только для владельца или админа -->
+                    @auth
+                        @if(auth()->id() === $product->user_id || auth()->user()->is_admin)
+                            <div class="btn-group mt-3 w-100 gap-2">
+                                <a href="{{ route('products.edit', $product) }}" 
+                                   class="btn btn-outline-warning">
+                                    <i class="fas fa-edit"></i> Редактировать
+                                </a>
+                        
+                                <form action="{{ route('products.destroy', $product) }}" 
+                                      method="POST" 
+                                      class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="btn btn-outline-danger"
+                                            onclick="return confirm('Вы уверены, что хотите удалить этот продукт?')">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+                    @endauth
                 </div>
             </div>
         </div>

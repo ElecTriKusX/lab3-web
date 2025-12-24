@@ -1,3 +1,4 @@
+php artisan tinker:
 
 $user1 = \App\Models\User::create([
     'name' => 'Иван',

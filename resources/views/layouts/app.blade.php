@@ -33,7 +33,7 @@
                                 <i class="fas fa-plus"></i> Добавить
                             </a>
                         </li>
-                        @can('view-trash')
+                        @if(auth()->user()->is_admin)
                             <li class="nav-item">
                                 <a href="{{ route('products.trashed') }}" class="btn btn-outline-warning position-relative me-2">
                                     <i class="fas fa-trash-alt"></i> Корзина
@@ -47,7 +47,7 @@
                                     @endif
                                 </a>
                             </li>
-                        @endcan
+                        @endif
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ auth()->user()->name }}
