@@ -24,6 +24,8 @@
                         <th>Email</th>
                         <th>Роль</th>
                         <th>Продуктов</th>
+                        <th>Подписчики</th>
+                        <th>Подписки</th>
                         <th>Дата регистрации</th>
                         <th>Действия</th>
                     </tr>
@@ -46,12 +48,45 @@
                             <td>
                                 <span class="badge bg-primary">{{ $user->products_count }}</span>
                             </td>
+                            <td>
+                                <a href="{{ route('followers.followers', $user) }}" class="badge bg-info text-decoration-none">
+                                    {{ $user->followers->count() }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ route('followers.following', $user) }}" class="badge bg-success text-decoration-none">
+                                    {{ $user->following->count() }}
+                                </a>
+                            </td>
                             <td>{{ $user->created_at->format('d.m.Y') }}</td>
                             <td>
-                                <a href="{{ route('products.user-products', $user->name) }}" 
-                                   class="btn btn-sm btn-primary">
-                                    <i class="fas fa-eye"></i> Продукты
-                                </a>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ route('products.user-products', $user->name) }}" 
+                                       class="btn btn-primary">
+                                        <i class="fas fa-eye"></i> Продукты
+                                    </a>
+                                    
+                                    @auth
+                                        @if(auth()->id() !== $user->id)
+                                            @if(auth()->user()->isFollowing($user->id))
+                                                <form action="{{ route('followers.unfollow', $user) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-outline-secondary">
+                                                        <i class="fas fa-user-minus"></i> Отписаться
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('followers.follow', $user) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success">
+                                                        <i class="fas fa-user-plus"></i> Подписаться
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        @endif
+                                    @endauth
+                                </div>
                             </td>
                         </tr>
                     @endforeach

@@ -32,6 +32,12 @@ class Product extends Model
         return $this->belongsTo(User::class);
     }
 
+    // Связь с комментариями
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
+    }
+
     // Мутатор для created_at
     public function getCreatedAtAttribute($value)
     {
@@ -72,17 +78,14 @@ class Product extends Model
         static::updating(function ($product) {
             $user = auth()->user();
             
-            // Если нет пользователя - блокируем
             if (!$user) {
                 return false;
             }
             
-            // Если пользователь - владелец или админ - разрешаем
             if ($product->user_id === $user->id || $user->is_admin) {
                 return true;
             }
             
-            // Иначе блокируем
             return false;
         });
 
@@ -90,17 +93,14 @@ class Product extends Model
         static::deleting(function ($product) {
             $user = auth()->user();
             
-            // Если нет пользователя - блокируем
             if (!$user) {
                 return false;
             }
             
-            // Если пользователь - владелец или админ - разрешаем
             if ($product->user_id === $user->id || $user->is_admin) {
                 return true;
             }
             
-            // Иначе блокируем
             return false;
         });
     }

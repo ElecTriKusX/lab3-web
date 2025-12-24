@@ -39,22 +39,32 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = Product::with('user')->latest()->paginate(8);
+        $products = Product::with(['user', 'comments'])->latest()->paginate(8);
         return view('products.index', compact('products'));
     }
 
     // Список продуктов конкретного пользователя
     public function userProducts($name)
     {
-        $user = User::where('name', $name)->firstOrFail();
-        $products = $user->products()->latest()->paginate(8);
+        $user = User::where('name', $name)
+            ->with(['followers', 'following'])
+            ->firstOrFail();
+        
+        $products = $user->products()
+            ->with('comments')
+            ->latest()
+            ->paginate(8);
+        
         return view('products.user-products', compact('products', 'user'));
     }
 
     // Список всех пользователей
     public function users()
     {
-        $users = User::withCount('products')->paginate(10);
+        $users = User::withCount('products')
+            ->with(['followers', 'following'])
+            ->paginate(10);
+        
         return view('products.users', compact('users'));
     }
 
@@ -83,7 +93,9 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $product->load('user');
+        // Загружаем продукт с пользователем и комментариями (включая авторов комментариев)
+        $product->load(['user', 'comments.user']);
+        
         return view('products.show', compact('product'));
     }
 

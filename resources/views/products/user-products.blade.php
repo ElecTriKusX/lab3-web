@@ -3,21 +3,80 @@
 @section('title', 'Продукты пользователя ' . $user->name)
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>
-            Продукты пользователя: {{ $user->name }}
-            @if($user->is_admin)
-                <span class="badge bg-danger">Admin</span>
-            @endif
-        </h1>
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>
+                Продукты пользователя: {{ $user->name }}
+                @if($user->is_admin)
+                    <span class="badge bg-danger">Admin</span>
+                @endif
+                @auth
+                    @if(auth()->user()->isFriend($user->id))
+                        <span class="badge bg-primary">
+                            <i class="fas fa-user-friends"></i> Друг
+                        </span>
+                    @endif
+                @endauth
+            </h1>
+            
+            <!-- Статистика пользователя -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h5>{{ $user->products->count() }}</h5>
+                            <p class="text-muted">Продуктов</p>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ route('followers.followers', $user) }}" class="text-decoration-none">
+                                <h5>{{ $user->followers->count() }}</h5>
+                                <p class="text-muted">Подписчиков</p>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ route('followers.following', $user) }}" class="text-decoration-none">
+                                <h5>{{ $user->following->count() }}</h5>
+                                <p class="text-muted">Подписок</p>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    @auth
+                        @if(auth()->id() !== $user->id)
+                            <hr>
+                            <div class="text-center">
+                                @if(auth()->user()->isFollowing($user->id))
+                                    <form action="{{ route('followers.unfollow', $user) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-secondary">
+                                            <i class="fas fa-user-minus"></i> Отписаться
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('followers.follow', $user) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-user-plus"></i> Подписаться
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        @endif
+                    @endauth
+                </div>
+            </div>
+        </div>
         
-        <div>
-            <a href="{{ route('products.users') }}" class="btn btn-secondary">
-                <i class="fas fa-users"></i> Все пользователи
-            </a>
-            <a href="{{ route('products.index') }}" class="btn btn-primary">
-                <i class="fas fa-arrow-left"></i> Все продукты
-            </a>
+        <div class="col-md-4">
+            <div class="d-flex flex-column gap-2">
+                <a href="{{ route('products.users') }}" class="btn btn-secondary">
+                    <i class="fas fa-users"></i> Все пользователи
+                </a>
+                <a href="{{ route('products.index') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Все продукты
+                </a>
+            </div>
         </div>
     </div>
 
@@ -83,6 +142,11 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ $product->title }}</h5>
                             <p class="card-text">{{ Str::limit($product->short_text, 80) }}</p>
+                            
+                            <!-- Комментарии -->
+                            <p class="text-muted small">
+                                <i class="fas fa-comments"></i> {{ $product->comments->count() }} комментариев
+                            </p>
                             
                             <!-- Подробнее -->
                             <div class="text-center mt-3">

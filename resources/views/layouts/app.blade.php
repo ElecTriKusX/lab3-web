@@ -24,6 +24,11 @@
                 <ul class="navbar-nav ms-auto">
                     @auth
                         <li class="nav-item">
+                            <a href="{{ route('followers.feed') }}" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-newspaper"></i> Лента
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('products.users') }}" class="btn btn-outline-info me-2">
                                 <i class="fas fa-users"></i> Пользователи
                             </a>
@@ -59,6 +64,16 @@
                                 <li>
                                     <a class="dropdown-item" href="{{ route('products.user-products', auth()->user()->name) }}">
                                         Мои продукты
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('followers.following', auth()->user()) }}">
+                                        Подписки ({{ auth()->user()->following->count() }})
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('followers.followers', auth()->user()) }}">
+                                        Подписчики ({{ auth()->user()->followers->count() }})
                                     </a>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
