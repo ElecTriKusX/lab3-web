@@ -63,24 +63,32 @@
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
                                     <a class="dropdown-item" href="{{ route('products.user-products', auth()->user()->name) }}">
-                                        Мои продукты
+                                        <i class="fas fa-box"></i> Мои продукты
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="{{ route('followers.following', auth()->user()) }}">
-                                        Подписки ({{ auth()->user()->following->count() }})
+                                        <i class="fas fa-user-check"></i> Подписки ({{ auth()->user()->following->count() }})
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="{{ route('followers.followers', auth()->user()) }}">
-                                        Подписчики ({{ auth()->user()->followers->count() }})
+                                        <i class="fas fa-users"></i> Подписчики ({{ auth()->user()->followers->count() }})
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('tokens.index') }}">
+                                        <i class="fas fa-key"></i> API Токены
                                     </a>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="dropdown-item">Выход</button>
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt"></i> Выход
+                                        </button>
                                     </form>
                                 </li>
                             </ul>

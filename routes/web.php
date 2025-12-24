@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowerController;
+use App\Http\Controllers\TokenController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -51,6 +52,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Маршруты для управления API токенами
+Route::middleware('auth')->group(function () {
+    Route::get('/tokens', [TokenController::class, 'index'])->name('tokens.index');
+    Route::post('/tokens', [TokenController::class, 'store'])->name('tokens.store');
+    Route::delete('/tokens/{token}', [TokenController::class, 'destroy'])->name('tokens.destroy');
 });
 
 require __DIR__.'/auth.php';
