@@ -17,7 +17,7 @@
                     <div class="card h-100">
                         <!-- Кнопки действий -->
                         <div class="position-absolute top-0 end-0 m-2">
-                            <div class="btn-group btn-group-sm">
+                            <div class="btn-group btn-group-sm gap-1">
                                 <a href="{{ route('products.edit', $product) }}" 
                                    class="btn btn-outline-warning"
                                    style="width: 35px; height: 35px;">

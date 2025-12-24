@@ -12,14 +12,35 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('products.index') }}">
                 <img src="{{ Vite::asset('resources/assets/images/Logo.png') }}" 
-                     alt="Лого" width="40" height="40" class="me-2">
+                    alt="Лого" width="40" height="40" class="me-2">
                 <span class="brand-name">CrOpsCaLcUlatOr</span>
             </a>
             
-            <div class="navbar-nav ms-auto">
-                <a href="{{ route('products.create') }}" class="btn btn-outline-light">
-                    Добавить продукт
-                </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="{{ route('products.create') }}" class="btn btn-outline-light me-2">
+                            <i class="fas fa-plus"></i> Добавить
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('products.trashed') }}" class="btn btn-outline-warning position-relative">
+                            <i class="fas fa-trash-alt"></i> Корзина
+                            @php
+                                $trashedCount = \App\Models\Product::onlyTrashed()->count();
+                            @endphp
+                            @if($trashedCount > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ $trashedCount }}
+                                </span>
+                            @endif
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>

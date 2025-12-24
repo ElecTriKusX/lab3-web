@@ -20,20 +20,18 @@
                         <small class="text-muted">Обновлено: {{ $product->updated_at }}</small>
                     </div>
                     
-                    <!-- Вместо текущего div с btn-group замените на: -->
-                    <div class="btn-group mt-3 w-100">
+                    <div class="btn-group mt-3 w-100 gap-2">
                         <a href="{{ route('products.edit', $product) }}" 
                         class="btn btn-outline-warning">
                             <i class="fas fa-edit"></i> Редактировать
                         </a>
                 
-                        
                         <!-- ФОРМА ДЛЯ УДАЛЕНИЯ -->
                         <form action="{{ route('products.destroy', $product) }}" 
                             method="POST" 
                             class="d-inline">
                             @csrf
-                            @method('DELETE') <!-- Важно! -->
+                            @method('DELETE')
                             <button type="submit" 
                                     class="btn btn-outline-danger"
                                     onclick="return confirm('Вы уверены, что хотите удалить этот продукт?')">

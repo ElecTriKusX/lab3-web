@@ -11,11 +11,27 @@ class ProductController extends Controller
     private function validationRules($id = null)
     {
         return [
-            'title' => 'required|string|max:255',
+            'title' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if (trim($value) === '') {
+                        $fail('Название не может состоять только из пробелов.');
+                    }
+                }
+            ],
             'category' => 'required|in:fruit,vegetable,flower',
-            'image' => $id ? 'sometimes|image|mimes:jpeg,png,jpg,gif|max:1024|dimensions:max_width=150,max_height=150' : 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024|dimensions:max_width=150,max_height=150',
-            'short_text' => 'required|string|max:500',
-            'full_text' => 'required|string'
+            'image' => [
+                $id ? 'sometimes' : 'nullable',
+                'image',
+                'mimes:jpeg,png,gif',
+                'max:1024',
+                'dimensions:max_width=150,max_height=150'
+            ],
+            'short_text' => 'required|string|min:10|max:500',
+            'full_text' => 'required|string|min:50',
         ];
     }
 
@@ -85,6 +101,46 @@ class ProductController extends Controller
         
         return redirect()->route('products.index')
             ->with('success', 'Продукт успешно удален!');
+    }
+
+    /**
+     * Показать корзину (удаленные продукты)
+     */
+    public function trashed()
+    {
+        $products = Product::onlyTrashed()->paginate(8);
+        return view('products.trashed', compact('products'));
+    }
+
+    /**
+     * Восстановить удаленный продукт
+     */
+    public function restore($id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
+        $product->restore();
+        
+        return redirect()->route('products.trashed')
+            ->with('success', 'Продукт "' . $product->title . '" успешно восстановлен!');
+    }
+
+    /**
+     * Полное удаление из базы данных
+     */
+    public function forceDelete($id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
+        
+        // Удаляем изображение
+        if ($product->image) {
+            Storage::delete('public/images/' . $product->image);
+        }
+        
+        $title = $product->title;
+        $product->forceDelete();
+        
+        return redirect()->route('products.trashed')
+            ->with('success', 'Продукт "' . $title . '" полностью удален из базы данных!');
     }
     
     private function uploadImage($image)
