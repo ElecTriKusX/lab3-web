@@ -29,16 +29,22 @@ Route::delete('/products/force-delete-all/all', [ProductController::class, 'forc
 Route::get('/users', [ProductController::class, 'users'])->name('products.users');
 Route::get('/users/{name}/products', [ProductController::class, 'userProducts'])->name('products.user-products');
 
-// Маршруты для комментариев
-Route::post('/products/{product}/comments', [CommentController::class, 'store'])->middleware('auth')->name('comments.store');
-Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->middleware('auth')->name('comments.destroy');
+// Маршруты для комментариев (требуют авторизации)
+Route::middleware('auth')->group(function () {
+    Route::post('/products/{product}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+});
 
 // Маршруты для подписок/дружбы
-Route::post('/users/{user}/follow', [FollowerController::class, 'follow'])->middleware('auth')->name('followers.follow');
-Route::delete('/users/{user}/unfollow', [FollowerController::class, 'unfollow'])->middleware('auth')->name('followers.unfollow');
+Route::middleware('auth')->group(function () {
+    Route::post('/users/{user}/follow', [FollowerController::class, 'follow'])->name('followers.follow');
+    Route::delete('/users/{user}/unfollow', [FollowerController::class, 'unfollow'])->name('followers.unfollow');
+    Route::get('/feed', [FollowerController::class, 'feed'])->name('followers.feed');
+});
+
+// Публичные маршруты для просмотра подписок
 Route::get('/users/{user}/following', [FollowerController::class, 'following'])->name('followers.following');
 Route::get('/users/{user}/followers', [FollowerController::class, 'followers'])->name('followers.followers');
-Route::get('/feed', [FollowerController::class, 'feed'])->middleware('auth')->name('followers.feed');
 
 // Маршруты для профиля
 Route::middleware('auth')->group(function () {

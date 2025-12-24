@@ -7,11 +7,6 @@ use Illuminate\Http\Request;
 
 class FollowerController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Подписаться на пользователя
      */
