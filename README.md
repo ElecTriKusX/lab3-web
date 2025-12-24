@@ -1,4 +1,4 @@
-// Создаем обычного пользователя
+
 $user1 = \App\Models\User::create([
     'name' => 'Иван',
     'email' => 'ivan@example.com',
@@ -6,7 +6,7 @@ $user1 = \App\Models\User::create([
     'is_admin' => false
 ]);
 
-// Создаем администратора
+
 $admin = \App\Models\User::create([
     'name' => 'Администратор',
     'email' => 'admin@example.com',
@@ -14,7 +14,6 @@ $admin = \App\Models\User::create([
     'is_admin' => true
 ]);
 
-// Создаем еще одного пользователя
 $user2 = \App\Models\User::create([
     'name' => 'Мария',
     'email' => 'maria@example.com',
@@ -22,7 +21,7 @@ $user2 = \App\Models\User::create([
     'is_admin' => false
 ]);
 
-// Создаем тестовые продукты для пользователей
+
 \App\Models\Product::create([
     'user_id' => $user1->id,
     'title' => 'Яблоко',
@@ -39,4 +38,3 @@ $user2 = \App\Models\User::create([
     'full_text' => 'Спелый помидор с грядки. Идеален для салатов и приготовления соусов.'
 ]);
 
-exit

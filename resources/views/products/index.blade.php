@@ -3,8 +3,9 @@
 @section('title', 'Все продукты')
 
 @section('content')
-
-    <h1>Все продукты</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Все продукты</h1>
+    </div>
 
     @if($products->isEmpty())
         <div class="alert alert-info">
