@@ -6,6 +6,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>
             Корзина удаленных продуктов
+            <span class="badge bg-danger">Только для администратора</span>
         </h1>
         
         <div>
@@ -38,7 +39,7 @@
                         
                         <!-- Дата удаления -->
                         <div class="position-absolute top-0 end-0 m-2">
-                            <small class="text-muted">
+                            <small class="text-muted bg-light px-2 py-1 rounded">
                                 Удалён: {{ $product->deleted_at->format('d.m.Y') }}
                             </small>
                         </div>
@@ -47,22 +48,27 @@
                         <img src="{{ $product->image_url }}" 
                              class="card-img-top img-fluid" 
                              alt="{{ $product->title }}"
-                             style="height: 200px;">
+                             style="height: 200px; opacity: 0.6;">
                         
                         <!-- Содержимое карточки -->
                         <div class="card-body">
                             <h5 class="card-title text-muted">{{ $product->title }}</h5>
                             <p class="card-text text-muted">{{ Str::limit($product->short_text, 80) }}</p>
                             
+                            <!-- Автор -->
+                            <p class="text-muted small">
+                                <i class="fas fa-user"></i> {{ $product->user->name }}
+                            </p>
+                            
                             <!-- Кнопки восстановления и полного удаления -->
                             <div class="d-flex justify-content-between mt-3 gap-2">
                                 <form action="{{ route('products.restore', $product->id) }}" 
                                       method="POST" 
-                                      class="d-inline">
+                                      class="d-inline flex-grow-1">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" 
-                                            class="btn btn-sm btn-success"
+                                            class="btn btn-sm btn-success w-100"
                                             onclick="return confirm('Восстановить продукт?')">
                                         <i class="fas fa-undo"></i> Восстановить
                                     </button>
@@ -70,13 +76,13 @@
                                 
                                 <form action="{{ route('products.force-delete', $product->id) }}" 
                                       method="POST" 
-                                      class="d-inline">
+                                      class="d-inline flex-grow-1">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" 
-                                            class="btn btn-sm btn-danger"
+                                            class="btn btn-sm btn-danger w-100"
                                             onclick="return confirm('Удалить продукт навсегда? Это действие нельзя отменить.')">
-                                        <i class="fas fa-trash"></i> Удалить навсегда
+                                        <i class="fas fa-trash"></i> Удалить
                                     </button>
                                 </form>
                             </div>
@@ -102,7 +108,7 @@
                 <p class="card-text">
                     Вы можете полностью очистить корзину. Все удаленные продукты будут безвозвратно удалены.
                 </p>
-                <form action="{{ route('products.index') }}/force-delete-all" 
+                <form action="{{ route('products.force-delete-all') }}" 
                       method="POST" 
                       onsubmit="return confirm('ВНИМАНИЕ! Все удаленные продукты будут удалены навсегда. Продолжить?')">
                     @csrf

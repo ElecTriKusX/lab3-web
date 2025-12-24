@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -37,8 +39,23 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = Product::latest()->paginate(8);
+        $products = Product::with('user')->latest()->paginate(8);
         return view('products.index', compact('products'));
+    }
+
+    // Список продуктов конкретного пользователя
+    public function userProducts($name)
+    {
+        $user = User::where('name', $name)->firstOrFail();
+        $products = $user->products()->latest()->paginate(8);
+        return view('products.user-products', compact('products', 'user'));
+    }
+
+    // Список всех пользователей
+    public function users()
+    {
+        $users = User::withCount('products')->paginate(10);
+        return view('products.users', compact('users'));
     }
 
     public function create()
@@ -49,6 +66,9 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate($this->validationRules());
+        
+        // Добавляем user_id текущего пользователя
+        $validated['user_id'] = auth()->id();
         
         if ($request->hasFile('image')) {
             $imageName = $this->uploadImage($request->file('image'));
@@ -63,16 +83,27 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        $product->load('user');
         return view('products.show', compact('product'));
     }
 
     public function edit(Product $product)
     {
+        // Проверка прав через Gate
+        if (Gate::denies('update-product', $product)) {
+            abort(403, 'У вас нет прав на редактирование этого продукта');
+        }
+        
         return view('products.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)
     {
+        // Проверка прав через Gate
+        if (Gate::denies('update-product', $product)) {
+            abort(403, 'У вас нет прав на редактирование этого продукта');
+        }
+        
         $validated = $request->validate($this->validationRules($product->id));
         
         if ($request->hasFile('image')) {
@@ -93,30 +124,40 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if ($product->image) {
-            Storage::delete('storage/images/' . $product->image);
+        // Проверка прав через Gate
+        if (Gate::denies('delete-product', $product)) {
+            abort(403, 'У вас нет прав на удаление этого продукта');
         }
         
+        // Мягкое удаление
         $product->delete();
         
         return redirect()->route('products.index')
-            ->with('success', 'Продукт успешно удален!');
+            ->with('success', 'Продукт перемещен в корзину!');
     }
 
     /**
-     * Показать корзину (удаленные продукты)
+     * Показать корзину (удаленные продукты) - только для админа
      */
     public function trashed()
     {
-        $products = Product::onlyTrashed()->paginate(8);
+        if (Gate::denies('view-trash')) {
+            abort(403, 'Доступ только для администраторов');
+        }
+        
+        $products = Product::onlyTrashed()->with('user')->paginate(8);
         return view('products.trashed', compact('products'));
     }
 
     /**
-     * Восстановить удаленный продукт
+     * Восстановить удаленный продукт - только для админа
      */
     public function restore($id)
     {
+        if (Gate::denies('restore-product')) {
+            abort(403, 'Доступ только для администраторов');
+        }
+        
         $product = Product::withTrashed()->findOrFail($id);
         $product->restore();
         
@@ -125,10 +166,14 @@ class ProductController extends Controller
     }
 
     /**
-     * Полное удаление из базы данных
+     * Полное удаление из базы данных - только для админа
      */
     public function forceDelete($id)
     {
+        if (Gate::denies('force-delete-product')) {
+            abort(403, 'Доступ только для администраторов');
+        }
+        
         $product = Product::withTrashed()->findOrFail($id);
         
         // Удаляем изображение
@@ -142,13 +187,33 @@ class ProductController extends Controller
         return redirect()->route('products.trashed')
             ->with('success', 'Продукт "' . $title . '" полностью удален из базы данных!');
     }
+
+    /**
+     * Очистить всю корзину - только для админа
+     */
+    public function forceDeleteAll()
+    {
+        if (Gate::denies('force-delete-product')) {
+            abort(403, 'Доступ только для администраторов');
+        }
+        
+        $products = Product::onlyTrashed()->get();
+        
+        foreach ($products as $product) {
+            if ($product->image) {
+                Storage::delete('public/images/' . $product->image);
+            }
+            $product->forceDelete();
+        }
+        
+        return redirect()->route('products.trashed')
+            ->with('success', 'Корзина полностью очищена!');
+    }
     
     private function uploadImage($image)
     {
         $fileName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-        
         $image->move(public_path('storage/images'), $fileName);
-        
         return $fileName;
     }
 }

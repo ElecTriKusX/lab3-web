@@ -12,6 +12,7 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'user_id',
         'title',
         'category',
         'image',
@@ -25,7 +26,13 @@ class Product extends Model
         'deleted_at'
     ];
 
-    // Мутатор для created_at (преобразование формата даты)
+    // Связь с пользователем
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Мутатор для created_at
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('d.m.Y H:i');
@@ -56,5 +63,31 @@ class Product extends Model
         ];
         
         return $categories[$this->category] ?? 'Неизвестно';
+    }
+
+    // Events для проверки прав
+    protected static function booted()
+    {
+        // Проверка перед обновлением
+        static::updating(function ($product) {
+            $user = auth()->user();
+            if (!$user) {
+                throw new \Exception('Необходима авторизация');
+            }
+            if ($product->user_id !== $user->id && !$user->is_admin) {
+                throw new \Exception('У вас нет прав на редактирование этого продукта');
+            }
+        });
+
+        // Проверка перед удалением
+        static::deleting(function ($product) {
+            $user = auth()->user();
+            if (!$user) {
+                throw new \Exception('Необходима авторизация');
+            }
+            if ($product->user_id !== $user->id && !$user->is_admin) {
+                throw new \Exception('У вас нет прав на удаление этого продукта');
+            }
+        });
     }
 }

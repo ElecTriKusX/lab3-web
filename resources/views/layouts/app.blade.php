@@ -22,24 +22,66 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a href="{{ route('products.create') }}" class="btn btn-outline-light me-2">
-                            <i class="fas fa-plus"></i> Добавить
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('products.trashed') }}" class="btn btn-outline-warning position-relative">
-                            <i class="fas fa-trash-alt"></i> Корзина
-                            @php
-                                $trashedCount = \App\Models\Product::onlyTrashed()->count();
-                            @endphp
-                            @if($trashedCount > 0)
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    {{ $trashedCount }}
-                                </span>
-                            @endif
-                        </a>
-                    </li>
+                    @auth
+                        <li class="nav-item">
+                            <a href="{{ route('products.users') }}" class="btn btn-outline-info me-2">
+                                <i class="fas fa-users"></i> Пользователи
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('products.create') }}" class="btn btn-outline-light me-2">
+                                <i class="fas fa-plus"></i> Добавить
+                            </a>
+                        </li>
+                        @can('view-trash')
+                            <li class="nav-item">
+                                <a href="{{ route('products.trashed') }}" class="btn btn-outline-warning position-relative me-2">
+                                    <i class="fas fa-trash-alt"></i> Корзина
+                                    @php
+                                        $trashedCount = \App\Models\Product::onlyTrashed()->count();
+                                    @endphp
+                                    @if($trashedCount > 0)
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                            {{ $trashedCount }}
+                                        </span>
+                                    @endif
+                                </a>
+                            </li>
+                        @endcan
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                                {{ auth()->user()->name }}
+                                @if(auth()->user()->is_admin)
+                                    <span class="badge bg-danger">Admin</span>
+                                @endif
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('products.user-products', auth()->user()->name) }}">
+                                        Мои продукты
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">Выход</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a href="{{ route('login') }}" class="btn btn-outline-light me-2">
+                                <i class="fas fa-sign-in-alt"></i> Вход
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('register') }}" class="btn btn-outline-success">
+                                <i class="fas fa-user-plus"></i> Регистрация
+                            </a>
+                        </li>
+                    @endauth
                 </ul>
             </div>
         </div>
